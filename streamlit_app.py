@@ -13,13 +13,15 @@ st.set_page_config(
 
 # --- SESSION STATE ---
 if "steps" not in st.session_state:
-    st.session_state.steps = 42500
+    st.session_state.steps = 7320
 if "distance" not in st.session_state:
-    st.session_state.distance = 32.0
+    st.session_state.distance = 5.2
 if "stairs" not in st.session_state:
-    st.session_state.stairs = 84
+    st.session_state.stairs = 3
 if "is_walking" not in st.session_state:
     st.session_state.is_walking = False
+if "current_page" not in st.session_state:
+    st.session_state.current_page = "home"
 
 # --- UTILS ---
 def get_image_as_base64(path):
@@ -40,6 +42,27 @@ def inject_custom_css():
         font-family: 'Fredoka', sans-serif;
     }}
 
+    /* HIDE STREAMLIT BRANDING */
+    #MainMenu {{visibility: hidden;}}
+    header {{visibility: hidden;}}
+    footer {{visibility: hidden;}}
+    .stDeployButton {{display:none;}}
+
+    /* IPHONE 17 PRO OPTIMIZATION */
+    .block-container {{
+        padding-top: 1rem !important;
+        padding-bottom: 5rem !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        max-width: 450px !important;
+        margin: 0 auto !important;
+    }}
+
+    .stApp {{
+        background-color: #f7f7f7 !important;
+    }}
+
+    /* BUTTONS */
     .stButton > button {{
         font-family: 'Fredoka', sans-serif !important;
         border-radius: 20px !important;
@@ -50,6 +73,8 @@ def inject_custom_css():
         border: none !important;
         box-shadow: 0 6px 0 #46a302 !important;
         transition: all 0.1s !important;
+        width: 100% !important;
+        margin-bottom: 0.5rem !important;
     }}
 
     .stButton > button:active {{
@@ -57,142 +82,132 @@ def inject_custom_css():
         box-shadow: 0 2px 0 #46a302 !important;
     }}
 
-    .stop-btn > div > button {{
-        background-color: #ff4b4b !important;
-        box-shadow: 0 6px 0 #d93d3d !important;
+    /* Secondary Buttons (Shop/Streak) */
+    .shop-btn > div > button {{
+        background-color: #1cb0f6 !important;
+        box-shadow: 0 6px 0 #1899d6 !important;
+    }}
+    .streak-btn > div > button {{
+        background-color: #ff9600 !important;
+        box-shadow: 0 6px 0 #d97f00 !important;
+    }}
+    .back-btn > div > button {{
+        background-color: #afafaf !important;
+        box-shadow: 0 6px 0 #8c8c8c !important;
+        font-size: 1.1rem !important;
+        padding: 0.5rem !important;
     }}
 
-    /* Global Overrides */
-    .main {{
-        background-color: #f7f7f7;
-    }}
-
-    /* Top Nav */
+    /* TOP NAV */
     .top-nav {{
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 1rem 0;
+        padding: 0.5rem 0;
         border-bottom: 2px solid #e5e5e5;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
     }}
 
     .nav-stats {{
         display: flex;
-        gap: 1.5rem;
-        font-size: 1.5rem;
+        gap: 1rem;
+        font-size: 1.4rem;
         font-weight: 600;
     }}
 
     .stat-item {{
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.4rem;
     }}
 
     .fire {{ color: #ff9600; }}
     .gem {{ color: #1cb0f6; }}
 
-    /* Goal Bar */
+    /* GOAL CONTAINER */
     .goal-container {{
         background: white;
         border: 2px solid #e5e5e5;
-        border-radius: 20px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 4px 0 #e5e5e5;
+        border-radius: 30px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 0 #e5e5e5;
+        text-align: center;
     }}
 
     .progress-wrapper {{
         background: #e5e5e5;
         height: 24px;
         border-radius: 12px;
-        margin-top: 1rem;
+        margin-top: 1.5rem;
         overflow: hidden;
     }}
 
     .progress-fill {{
         background: #58cc02;
         height: 100%;
-        width: 65%;
         transition: width 0.5s ease;
     }}
 
-    /* Roadmap Tasks */
-    .day-header {{
-        font-size: 1.8rem;
-        margin-top: 2.5rem;
-        margin-bottom: 1rem;
-        color: #afafaf;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        font-weight: 600;
-        border-left: 8px solid #58cc02;
-        padding-left: 1rem;
-    }}
-
-    .task-card {{
-        background: white;
-        border: 2px solid #e5e5e5;
-        border-radius: 24px;
-        padding: 1.5rem;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        box-shadow: 0 6px 0 #e5e5e5;
-    }}
-
-    .task-card.completed {{
-        background: #d7ffb7;
-        border-color: #58cc02;
-        box-shadow: 0 6px 0 #58cc02;
-    }}
-
-    .task-icon {{ font-size: 2.5rem; width: 60px; text-align: center; }}
-    .task-info h3 {{ margin: 0; font-size: 1.6rem; }}
-    .task-info p {{ margin: 0; color: #777; font-size: 1.2rem; }}
-
-    /* Stats Dashboard */
-    .stats-footer {{
-        background: #2b70c9;
-        color: white;
-        border-radius: 24px;
-        padding: 2rem;
-        margin-top: 3rem;
-        box-shadow: 0 8px 0 #1c4a85;
-    }}
-
-    .stats-grid {{
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 1rem;
-        text-align: center;
-    }}
-
-    .big-stat {{ font-size: 2.8rem; font-weight: 600; display: block; }}
-    .stat-label {{ font-size: 1.1rem; opacity: 0.9; text-transform: uppercase; }}
-
+    /* SPEECH BUBBLE */
     .speech-bubble {{
         background: white;
         border: 2px solid #e5e5e5;
         border-radius: 20px;
-        padding: 1.2rem;
+        padding: 1rem;
         position: relative;
         display: inline-block;
-        margin-left: 20px;
-        font-size: 1.4rem;
+        margin-left: 15px;
+        font-size: 1.2rem;
         box-shadow: 0 4px 0 #e5e5e5;
-        max-width: 300px;
+        max-width: 250px;
+        color: #3c3c3c;
+    }}
+
+    /* SHOP ITEMS */
+    .shop-item {{
+        background: white;
+        border: 2px solid #e5e5e5;
+        border-radius: 24px;
+        padding: 1.2rem;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 5px 0 #e5e5e5;
+    }}
+
+    /* CALENDAR MOCK */
+    .calendar-grid {{
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 8px;
+        margin-top: 1.5rem;
+    }}
+    .calendar-day {{
+        background: white;
+        border: 2px solid #e5e5e5;
+        border-radius: 12px;
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        font-weight: 600;
+        box-shadow: 0 3px 0 #e5e5e5;
+    }}
+    .calendar-day.active {{
+        background: #fff4e5;
+        border-color: #ff9600;
+        color: #ff9600;
+        box-shadow: 0 3px 0 #ff9600;
     }}
     </style>
     """, unsafe_allow_html=True)
 
-# --- APP LAYOUT ---
-def main():
-    inject_custom_css()
+# --- VIEW FUNCTIONS ---
 
-    # Top Nav
+def draw_top_nav():
     st.markdown(f"""
     <div class="top-nav">
         <div style="font-size: 2.2rem; font-weight: 600; color: #58cc02;">HyperWalk</div>
@@ -203,103 +218,151 @@ def main():
     </div>
     """, unsafe_allow_html=True)
 
-    # LIVE WALK SIMULATION
-    if st.session_state.is_walking:
-        placeholder = st.empty()
-        if st.button("STOP WALK 🛑", key="stop", use_container_width=True):
-            st.session_state.is_walking = False
-            st.success(f"Walk Finished! You added {st.session_state.steps - 42500} steps today!")
-            st.balloons()
-            st.rerun()
-        
-        # Simulation Loop
-        for _ in range(20): # Simulate a few updates
-            if not st.session_state.is_walking: break
-            st.session_state.steps += 12
-            st.session_state.distance += 0.01
-            placeholder.markdown(f"""
-            <div style="background: #58cc02; color: white; padding: 2rem; border-radius: 30px; text-align: center; margin-bottom: 2rem; box-shadow: 0 10px 0 #46a302;">
-                <div style="font-size: 1.5rem; text-transform: uppercase;">Walking Active...</div>
-                <div style="font-size: 5rem; font-weight: 600;">{st.session_state.steps:,}</div>
-                <div style="font-size: 2rem;">{st.session_state.distance:.2f} km</div>
-            </div>
-            """, unsafe_allow_html=True)
-            time.sleep(0.5)
+def draw_mascot(text):
+    cheetah_base64 = get_image_as_base64("assets/cheetah.png")
+    st.markdown(f"""
+    <div style="display: flex; align-items: center; justify-content: center; margin-top: 1rem; margin-bottom: 2rem;">
+        <img src="data:image/png;base64,{cheetah_base64}" style="width: 120px;">
+        <div class="speech-bubble">"{text}"</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+def draw_home():
+    draw_top_nav()
+    draw_mascot("Looking fast today, Giacomo! Let's hit that daily goal!")
+
+    # Daily Goal Progress
+    st.markdown(f"""
+    <div class="goal-container">
+        <div style="font-size: 1.2rem; text-transform: uppercase; color: #afafaf; letter-spacing: 1px;">Daily Stride</div>
+        <div style="font-size: 4rem; font-weight: 600; margin: 0.5rem 0;">{st.session_state.steps % 10000:,}</div>
+        <div style="font-size: 1.5rem; color: #777;">steps out of 10,000</div>
+        <div class="progress-wrapper">
+            <div class="progress-fill" style="width: {(st.session_state.steps % 10000) / 100}%"></div>
+        </div>
+        <div style="display: flex; justify-content: space-around; margin-top: 1.5rem;">
+            <div><b style="font-size: 1.4rem;">{st.session_state.distance:.1f}</b><br><small>KMS</small></div>
+            <div><b style="font-size: 1.4rem;">{st.session_state.stairs}</b><br><small>STAIRS</small></div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if st.button("START LIVE WALK 👣", use_container_width=True):
+        st.session_state.is_walking = True
         st.rerun()
 
-    else:
-        # Goal Bar
+    st.write("---")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown('<div class="shop-btn">', unsafe_allow_html=True)
+        if st.button("SHOP 💎"):
+            st.session_state.current_page = "shop"
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with col2:
+        st.markdown('<div class="streak-btn">', unsafe_allow_html=True)
+        if st.button("STREAK 🔥"):
+            st.session_state.current_page = "streak"
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+
+def draw_shop():
+    st.markdown('<div class="back-btn">', unsafe_allow_html=True)
+    if st.button("⬅️ HOME"):
+        st.session_state.current_page = "home"
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    st.markdown("<h1 style='text-align: center;'>HyperShop 💎</h1>", unsafe_allow_html=True)
+    draw_mascot("Spend your diamonds on some slick new gear!")
+
+    items = [
+        ("Golden Sneakers", "✨ 500", "👟"),
+        ("Double XP Potion", "💎 100", "🧪"),
+        ("Cheetah Cape", "🔥 50", "🦸"),
+        ("Heart Refill", "💎 25", "❤️"),
+    ]
+
+    for name, price, icon in items:
         st.markdown(f"""
-        <div class="goal-container">
-            <div style="display: flex; justify-content: space-between; align-items: end;">
-                <div style="font-size: 1.8rem; font-weight: 600;">Daily Goal</div>
-                <div style="color: #777; font-size: 1.2rem;">{st.session_state.steps % 10000:,} / 10,000 steps</div>
+        <div class="shop-item">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="font-size: 2.5rem;">{icon}</div>
+                <div>
+                    <h3 style="margin:0;">{name}</h3>
+                    <p style="margin:0; color:#777;">Limited Edition</p>
+                </div>
             </div>
-            <div class="progress-wrapper">
-                <div class="progress-fill" style="width: {(st.session_state.steps % 10000) / 100}%"></div>
-            </div>
+            <div style="font-size: 1.5rem; font-weight: 600;">{price}</div>
         </div>
         """, unsafe_allow_html=True)
 
-        if st.button("START LIVE WALK 👣", use_container_width=True):
-            st.session_state.is_walking = True
-            st.rerun()
+def draw_streak():
+    st.markdown('<div class="back-btn">', unsafe_allow_html=True)
+    if st.button("⬅️ HOME"):
+        st.session_state.current_page = "home"
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    st.markdown("<h1 style='text-align: center;'>Streak 7 🔥</h1>", unsafe_allow_html=True)
+    draw_mascot("You're on fire! 7 days in a row!")
 
-    # Mascot with Quote
-    cheetah_base64 = get_image_as_base64("assets/cheetah.png")
-    st.markdown(f"""
-    <div style="display: flex; align-items: center; justify-content: center; margin-top: 2rem; margin-bottom: 2rem;">
-        <img src="data:image/png;base64,{cheetah_base64}" style="width: 140px;">
-        <div class="speech-bubble">
-            "{ "Keep those legs moving, friend! We're almost at the top!" if st.session_state.is_walking else "Ready for a stroll today? Your cheetah coach is waiting!" }"
+    st.markdown("<h3 style='margin-bottom:0;'>April 2026</h3>", unsafe_allow_html=True)
+    
+    # Calendar Mockup
+    st.markdown('<div class="calendar-grid">', unsafe_allow_html=True)
+    for i in range(1, 31):
+        active_class = "active" if 7 <= i <= 13 else ""
+        text = "🔥" if 7 <= i <= 13 else str(i)
+        st.markdown(f'<div class="calendar-day {active_class}">{text}</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.write("")
+    st.info("Don't let your streak freeze! Walk at least 2,000 steps today to keep the fire burning.")
+
+# --- SIMULATION ---
+
+def draw_active_walk():
+    placeholder = st.empty()
+    st.markdown('<div class="stop-btn">', unsafe_allow_html=True)
+    if st.button("STOP WALK 🛑", key="stop", use_container_width=True):
+        st.session_state.is_walking = False
+        st.success(f"Walk Finished! You added {st.session_state.steps - 42500} steps today!")
+        st.balloons()
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Simulation Loop
+    for _ in range(20):
+        if not st.session_state.is_walking: break
+        st.session_state.steps += 12
+        st.session_state.distance += 0.01
+        placeholder.markdown(f"""
+        <div style="background: #58cc02; color: white; padding: 2rem; border-radius: 30px; text-align: center; margin-bottom: 2rem; box-shadow: 0 10px 0 #46a302;">
+            <div style="font-size: 1.5rem; text-transform: uppercase;">Walking Active...</div>
+            <div style="font-size: 5rem; font-weight: 600;">{st.session_state.steps:,}</div>
+            <div style="font-size: 2rem;">{st.session_state.distance:.2f} km</div>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
+        time.sleep(0.5)
+    st.rerun()
 
-    # ROADMAP
-    days = [
-        ("Monday - Warm up", [("🏡", "Morning Stretch", "Done! +10 XP", True), ("🥦", "Grocery Run", "30 mins • 2k steps", False)]),
-        ("Tuesday - The Climb", [("⛰️", "Stair Master", "12 flights", False), ("🌳", "Park Expedition", "5k steps", False)]),
-        ("Wednesday - Market Sprint", [("🛒", "Market Hustle", "Quick 15 min walk", False)]),
-        ("Thursday - Evening Glow", [("🌅", "Sunset Stroll", "3k steps • Relax", False)]),
-        ("Friday - Power Hour", [("⚡", "Interval Walk", "Vary your speed!", False)]),
-        ("Saturday - Long Trek", [("🗺️", "Exploration", "10k steps goal", False)]),
-        ("Sunday - Recover", [("🧘", "Lazy Stride", "Gentle movement", False)]),
-    ]
+# --- MAIN ---
 
-    for day_title, tasks in days:
-        st.markdown(f'<div class="day-header">{day_title}</div>', unsafe_allow_html=True)
-        for icon, title, desc, done in tasks:
-            st.markdown(f"""
-            <div class="task-card {'completed' if done else ''}">
-                <div class="task-icon">{icon}</div>
-                <div class="task-info">
-                    <h3>{title}</h3>
-                    <p>{desc}</p>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+def main():
+    inject_custom_css()
 
-    # BIG STATS DASHBOARD
-    st.markdown(f"""
-    <div class="stats-footer">
-        <div style="font-size: 1.8rem; margin-bottom: 1.5rem; font-weight: 600;">Your Weekly Performance</div>
-        <div class="stats-grid">
-            <div>
-                <span class="big-stat">{st.session_state.steps // 1000}k</span>
-                <span class="stat-label">Total Steps</span>
-            </div>
-            <div>
-                <span class="big-stat">{st.session_state.distance:.1f}</span>
-                <span class="stat-label">Kilometers</span>
-            </div>
-            <div>
-                <span class="big-stat">{st.session_state.stairs}</span>
-                <span class="stat-label">Stairs Climbed</span>
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    if st.session_state.is_walking:
+        draw_active_walk()
+    else:
+        if st.session_state.current_page == "home":
+            draw_home()
+        elif st.session_state.current_page == "shop":
+            draw_shop()
+        elif st.session_state.current_page == "streak":
+            draw_streak()
 
 if __name__ == "__main__":
     main()
