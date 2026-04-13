@@ -91,17 +91,26 @@ def inject_custom_css():
     }}
 
     /* TOP NAV NAVIGATION */
+    .top-nav-wrapper [data-testid="stHorizontalBlock"] {{
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 0.5rem !important;
+    }}
+
     .nav-btn > div > button {{
         background: rgba(255, 255, 255, 0.7) !important;
         color: #3c3c3c !important;
         border: 1px solid rgba(255, 255, 255, 0.8) !important;
         backdrop-filter: blur(10px) !important;
         box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
-        font-size: 1.2rem !important;
+        font-size: 1rem !important;
         border-radius: 18px !important;
-        padding: 0.4rem 0.8rem !important;
-        width: auto !important;
-        min-width: 80px !important;
+        padding: 0.2rem 0.5rem !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        white-space: nowrap !important;
     }}
     .nav-btn-active > div > button {{
         border: 2px solid #58cc02 !important;
@@ -209,9 +218,10 @@ def inject_custom_css():
 # --- VIEW FUNCTIONS ---
 
 def draw_top_nav():
+    st.markdown('<div class="top-nav-wrapper">', unsafe_allow_html=True)
     col1, col2, col3 = st.columns([2, 1, 1])
     with col1:
-        st.markdown(f'<div style="font-size: 2.2rem; font-weight: 600; color: #58cc02; cursor: pointer;" onclick="window.location.reload()">HyperWalk</div>', unsafe_allow_html=True)
+        st.markdown(f'<div style="font-size: 1.8rem; font-weight: 600; color: #58cc02; cursor: pointer; white-space: nowrap;">HyperWalk</div>', unsafe_allow_html=True)
     
     with col2:
         st.markdown(f'<div class="{"nav-btn-active" if st.session_state.current_page == "streak" else "nav-btn"}">', unsafe_allow_html=True)
@@ -226,6 +236,7 @@ def draw_top_nav():
             st.session_state.current_page = "shop"
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 def draw_mascot(text):
     cheetah_base64 = get_image_as_base64("assets/cheetah.png")
