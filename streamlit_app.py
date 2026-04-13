@@ -22,6 +22,8 @@ if "is_walking" not in st.session_state:
     st.session_state.is_walking = False
 if "current_page" not in st.session_state:
     st.session_state.current_page = "home"
+if "selected_calendar_day" not in st.session_state:
+    st.session_state.selected_calendar_day = 13
 
 # --- UTILS ---
 def get_image_as_base64(path):
@@ -96,6 +98,35 @@ def inject_custom_css():
         box-shadow: 0 6px 0 #8c8c8c !important;
         font-size: 1.1rem !important;
         padding: 0.5rem !important;
+    }}
+
+    /* CALENDAR BUTTONS */
+    .calendar-btn > div > button {{
+        background-color: white !important;
+        color: #3c3c3c !important;
+        border: 2px solid #e5e5e5 !important;
+        box-shadow: 0 4px 0 #e5e5e5 !important;
+        font-size: 1.2rem !important;
+        padding: 0 !important;
+        aspect-ratio: 1 !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 48px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }}
+    .calendar-btn-active > div > button {{
+        background-color: #fff4e5 !important;
+        border-color: #ff9600 !important;
+        color: #ff9600 !important;
+        box-shadow: 0 4px 0 #ff9600 !important;
+    }}
+    .calendar-btn-future > div > button {{
+        opacity: 0.3 !important;
+        cursor: not-allowed !important;
+        background-color: #f7f7f7 !important;
+        box-shadow: none !important;
     }}
 
     /* TOP NAV */
@@ -177,30 +208,14 @@ def inject_custom_css():
         box-shadow: 0 5px 0 #e5e5e5;
     }}
 
-    /* CALENDAR MOCK */
-    .calendar-grid {{
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 8px;
-        margin-top: 1.5rem;
-    }}
-    .calendar-day {{
+    /* HISTORY CARD */
+    .history-card {{
         background: white;
         border: 2px solid #e5e5e5;
-        border-radius: 12px;
-        aspect-ratio: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        font-weight: 600;
-        box-shadow: 0 3px 0 #e5e5e5;
-    }}
-    .calendar-day.active {{
-        background: #fff4e5;
-        border-color: #ff9600;
-        color: #ff9600;
-        box-shadow: 0 3px 0 #ff9600;
+        border-radius: 24px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+        box-shadow: 0 8px 0 #e5e5e5;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -276,7 +291,7 @@ def draw_shop():
     st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown("<h1 style='text-align: center;'>HyperShop 💎</h1>", unsafe_allow_html=True)
-    draw_mascot("Spend your diamonds on some slick new gear!")
+    # MASCOT REMOVED FROM SHOP PER REQUEST
 
     items = [
         ("Golden Sneakers", "✨ 500", "👟"),
@@ -307,20 +322,57 @@ def draw_streak():
     st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown("<h1 style='text-align: center;'>Streak 7 🔥</h1>", unsafe_allow_html=True)
-    draw_mascot("You're on fire! 7 days in a row!")
+    # MASCOT REMOVED FROM STREAK PER REQUEST
 
-    st.markdown("<h3 style='margin-bottom:0;'>April 2026</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='margin-bottom:1rem;'>April 2026</h3>", unsafe_allow_html=True)
     
-    # Calendar Mockup
-    st.markdown('<div class="calendar-grid">', unsafe_allow_html=True)
-    for i in range(1, 31):
-        active_class = "active" if 7 <= i <= 13 else ""
-        text = "🔥" if 7 <= i <= 13 else str(i)
-        st.markdown(f'<div class="calendar-day {active_class}">{text}</div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+    # INTERACTIVE CALENDAR
+    for week in range(5):
+        cols = st.columns(7)
+        for d in range(7):
+            day_num = week * 7 + d + 1
+            if day_num <= 30:
+                with cols[d]:
+                    is_past = day_num <= 13
+                    is_active = st.session_state.selected_calendar_day == day_num
+                    is_streak = 7 <= day_num <= 13
+                    
+                    btn_class = "calendar-btn"
+                    if is_active: btn_class += " calendar-btn-active"
+                    if not is_past: btn_class += " calendar-btn-future"
+                    
+                    st.markdown(f'<div class="{btn_class}">', unsafe_allow_html=True)
+                    label = "🔥" if is_streak else str(day_num)
+                    
+                    if st.button(label, key=f"cal_{day_num}", disabled=not is_past):
+                        st.session_state.selected_calendar_day = day_num
+                        st.rerun()
+                    st.markdown('</div>', unsafe_allow_html=True)
+
+    # HISTORY CARD
+    sel = st.session_state.selected_calendar_day
+    if sel and sel <= 13:
+        mock_steps = [8500, 9200, 10500, 7800, 10200, 11000, 9500, 12000, 8000, 10000, 9800, 10500, 7320][sel-1]
+        st.markdown(f"""
+        <div class="history-card">
+            <div style="font-size: 1.2rem; font-weight: 600; color: #ff9600; margin-bottom: 0.5rem;">
+                📅 APRIL {sel}, 2026 DETAILS
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="font-size: 2rem; font-weight: 600;">{mock_steps:,}</div>
+                    <div style="color: #777;">steps completed</div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 1.2rem; color: #58cc02;">{'✅ GOAL REACHED' if mock_steps >= 10000 else '🚶 KEEP WALKING'}</div>
+                    <div style="font-size: 1rem; color: #777;">+50 Gems Earned</div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
     st.write("")
-    st.info("Don't let your streak freeze! Walk at least 2,000 steps today to keep the fire burning.")
+    st.info("Tap a past day to view your specific task performance. Future days are locked for now!")
 
 # --- SIMULATION ---
 
@@ -329,7 +381,7 @@ def draw_active_walk():
     st.markdown('<div class="stop-btn">', unsafe_allow_html=True)
     if st.button("STOP WALK 🛑", key="stop", use_container_width=True):
         st.session_state.is_walking = False
-        st.success(f"Walk Finished! You added {st.session_state.steps - 42500} steps today!")
+        st.success(f"Walk Finished! Well done!")
         st.balloons()
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
