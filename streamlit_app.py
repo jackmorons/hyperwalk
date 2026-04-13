@@ -90,7 +90,7 @@ def inject_custom_css():
         box-shadow: 0 4px 10px rgba(88, 204, 2, 0.2) !important;
     }}
 
-    /* TOP NAV NAVIGATION */
+    /* AGGRESSIVE TOP NAV FIX (FORCES FLEX-ROW ON MOBILE) */
     .top-nav-wrapper [data-testid="stHorizontalBlock"] {{
         flex-direction: row !important;
         flex-wrap: nowrap !important;
@@ -99,13 +99,20 @@ def inject_custom_css():
         gap: 0.5rem !important;
     }}
 
+    .top-nav-wrapper [data-testid="column"] {{
+        flex: 1 1 auto !important;
+        width: auto !important;
+        min-width: 0 !important;
+        flex-basis: auto !important;
+    }}
+
     .nav-btn > div > button {{
         background: rgba(255, 255, 255, 0.7) !important;
         color: #3c3c3c !important;
         border: 1px solid rgba(255, 255, 255, 0.8) !important;
         backdrop-filter: blur(10px) !important;
         box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
-        font-size: 1rem !important;
+        font-size: 0.9rem !important;
         border-radius: 18px !important;
         padding: 0.2rem 0.5rem !important;
         width: 100% !important;
