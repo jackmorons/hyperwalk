@@ -226,9 +226,9 @@ def inject_custom_css():
 
 def draw_top_nav():
     st.markdown('<div class="top-nav-wrapper">', unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([2, 1, 1])
+    col1, col2, col3 = st.columns([1.2, 1, 1])
     with col1:
-        st.markdown(f'<div style="font-size: 1.8rem; font-weight: 600; color: #58cc02; cursor: pointer; white-space: nowrap;">HyperWalk</div>', unsafe_allow_html=True)
+        st.markdown(f'<div style="font-size: 1.5rem; font-weight: 600; color: #58cc02; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">HyperWalk</div>', unsafe_allow_html=True)
     
     with col2:
         st.markdown(f'<div class="{"nav-btn-active" if st.session_state.current_page == "streak" else "nav-btn"}">', unsafe_allow_html=True)
