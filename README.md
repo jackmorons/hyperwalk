@@ -1,19 +1,16 @@
-# 🎈 Blank app template
+# 🐆 HyperWalk - Move Daily!
 
-A simple Streamlit app template for you to modify!
+A gamified walking tracker mockup designed for older users, built with Streamlit and styled with a "Duolingo" aesthetic.
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://blank-app-template.streamlit.app/)
+### ✨ Features
+- **Cheetah Mascot**: A friendly coach to keep you motivated.
+- **Daily Roadmap**: A clear, accessible "Days and Tasks" layout.
+- **Accessible UI**: Massive text, high-contrast colors, and "chunky" interactive buttons.
+- **Gamified Stats**: Track steps, distance, and stairs with big, readable cards.
 
-### How to run it on your own machine
-
-1. Install the requirements
-
-   ```
-   $ pip install -r requirements.txt
-   ```
-
-2. Run the app
-
-   ```
-   $ streamlit run streamlit_app.py
+### 🚀 How to run it
+1. Ensure `streamlit` is installed.
+2. Run the app:
+   ```bash
+   streamlit run streamlit_app.py
    ```
