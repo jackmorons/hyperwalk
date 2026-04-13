@@ -54,8 +54,8 @@ def inject_custom_css():
     .block-container {{
         padding-top: 1rem !important;
         padding-bottom: 5rem !important;
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
         max-width: 450px !important;
         margin: 0 auto !important;
     }}
@@ -90,20 +90,22 @@ def inject_custom_css():
         box-shadow: 0 4px 10px rgba(88, 204, 2, 0.2) !important;
     }}
 
-    /* AGGRESSIVE TOP NAV FIX (FORCES FLEX-ROW ON MOBILE) */
+    /* NUCLEAR TOP NAV FIX (FORCES FLEX-ROW ON SMALLEST SCREENS) */
     .top-nav-wrapper [data-testid="stHorizontalBlock"] {{
+        display: flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
         align-items: center !important;
         justify-content: space-between !important;
-        gap: 0.5rem !important;
+        gap: 0.3rem !important;
     }}
 
     .top-nav-wrapper [data-testid="column"] {{
-        flex: 1 1 auto !important;
         width: auto !important;
-        min-width: 0 !important;
+        min-width: 0px !important;
+        flex: 1 1 auto !important;
         flex-basis: auto !important;
+        margin-right: 0 !important;
     }}
 
     .nav-btn > div > button {{
@@ -112,11 +114,11 @@ def inject_custom_css():
         border: 1px solid rgba(255, 255, 255, 0.8) !important;
         backdrop-filter: blur(10px) !important;
         box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
-        font-size: 0.9rem !important;
-        border-radius: 18px !important;
-        padding: 0.2rem 0.5rem !important;
+        font-size: 0.85rem !important;
+        border-radius: 16px !important;
+        padding: 0.2rem 0.4rem !important;
         width: 100% !important;
-        min-width: 0 !important;
+        min-width: 60px !important;
         white-space: nowrap !important;
     }}
     .nav-btn-active > div > button {{
@@ -226,9 +228,9 @@ def inject_custom_css():
 
 def draw_top_nav():
     st.markdown('<div class="top-nav-wrapper">', unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([1.2, 1, 1])
+    col1, col2, col3 = st.columns([1, 1, 1])
     with col1:
-        st.markdown(f'<div style="font-size: 1.5rem; font-weight: 600; color: #58cc02; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">HyperWalk</div>', unsafe_allow_html=True)
+        st.markdown(f'<div style="font-size: 1.4rem; font-weight: 600; color: #58cc02; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">HyperWalk</div>', unsafe_allow_html=True)
     
     with col2:
         st.markdown(f'<div class="{"nav-btn-active" if st.session_state.current_page == "streak" else "nav-btn"}">', unsafe_allow_html=True)
